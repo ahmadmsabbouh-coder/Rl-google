@@ -1,1 +1,1965 @@
-https://es-d-24044193520261112-01a1c3f4-bec5-7ac2-9a86-448ef2893faf.codepen.dev/
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RL GOOGLE - Ultimate Rocket League Search Engine & Video Codex</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Orbitron & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rlBlue: '#0099ff',
+                        rlOrange: '#ff6600',
+                        rlGold: '#f1c40f',
+                        rlPurple: '#a855f7',
+                        rlSsl: '#ff3366',
+                        rlDark: '#080a0f',
+                        rlCard: '#111622',
+                        rlBorder: '#1e283d'
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'neon-blue': '0 0 20px rgba(0, 153, 255, 0.4)',
+                        'neon-orange': '0 0 20px rgba(255, 102, 0, 0.4)',
+                        'neon-purple': '0 0 20px rgba(168, 85, 247, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #06080c;
+            color: #f3f4f6;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(0, 153, 255, 0.1) 0%, transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(255, 102, 0, 0.1) 0%, transparent 45%),
+                linear-gradient(to bottom, rgba(8, 10, 15, 0.95), rgba(6, 8, 12, 0.98)),
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.01) 2px, rgba(255, 255, 255, 0.01) 4px);
+            background-attachment: fixed;
+        }
+
+        .glass-panel {
+            background: rgba(17, 22, 34, 0.85);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #080a0f;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #1e283d;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #0099ff;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-rlBlue selection:text-white custom-scrollbar">
+
+    <!-- TOP NAVIGATION HEADER -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-rlBorder/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('search-home')">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-rlOrange via-rlPurple to-rlBlue p-[2px] shadow-neon-blue">
+                    <div class="w-full h-full bg-rlDark rounded-[6px] flex items-center justify-center">
+                        <i class="fa-solid font-orbitron font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rlBlue to-rlOrange text-xl">RL</i>
+                    </div>
+                </div>
+                <div>
+                    <span class="font-orbitron text-xl font-black tracking-wider text-white">RL<span class="text-rlBlue">GOO</span><span class="text-rlOrange">GLE</span></span>
+                    <span class="hidden sm:inline-block text-[10px] uppercase font-mono px-2 py-0.5 ml-2 bg-rlBlue/20 text-rlBlue border border-rlBlue/40 rounded">100+ Mechanics Codex</span>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 text-sm font-medium">
+                <button onclick="switchTab('search-home')" class="nav-btn px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition" id="nav-search-home">
+                    <i class="fa-solid fa-magnifying-glass mr-1.5 text-rlBlue"></i> Search Engine
+                </button>
+                <button onclick="switchTab('mechanics-timeline')" class="nav-btn px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition" id="nav-mechanics-timeline">
+                    <i class="fa-solid fa-play mr-1.5 text-rlOrange"></i> Video Codex (100+)
+                </button>
+                <button onclick="switchTab('tracker')" class="nav-btn px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition" id="nav-tracker">
+                    <i class="fa-solid fa-chart-line mr-1.5 text-emerald-400"></i> RL Tracker
+                </button>
+                <button onclick="switchTab('cars-setups')" class="nav-btn px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition" id="nav-cars-setups">
+                    <i class="fa-solid fa-car-side mr-1.5 text-rlPurple"></i> Hitboxes & Pro Setups
+                </button>
+                <button onclick="switchTab('calculator')" class="nav-btn px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition" id="nav-calculator">
+                    <i class="fa-solid fa-graduation-cap mr-1.5 text-rlGold"></i> Skill Roadmap
+                </button>
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                <button onclick="switchTab('tracker')" class="bg-gradient-to-r from-rlBlue to-blue-600 hover:from-blue-600 hover:to-rlBlue text-white font-semibold text-xs px-4 py-2 rounded-lg shadow-neon-blue transition transform active:scale-95">
+                    Live MMR Tracker
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINERS -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- ================= SECTION 1: SEARCH HUB ================= -->
+        <section id="tab-search-home" class="tab-content block space-y-8">
+            <div class="text-center pt-6 pb-2 space-y-4 max-w-3xl mx-auto">
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-gradient-to-r from-rlBlue/20 to-rlOrange/20 border border-white/10 text-xs font-mono text-gray-300">
+                    <i class="fa-solid fa-bolt text-rlOrange"></i>
+                    <span> Exhaustive Codex of 100+ Mechanics with Instant Video Tutorials</span>
+                </div>
+                
+                <h1 class="text-4xl sm:text-6xl font-black font-orbitron tracking-tight text-white">
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-rlBlue to-white">RL</span>
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-white via-rlOrange to-amber-500">GOOGLE</span>
+                </h1>
+                <p class="text-gray-400 text-sm sm:text-base font-light">
+                    The absolute definitive search engine for every single Rocket League mechanic ever discovered—from basic powerslides to Psycho shots.
+                </p>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="max-w-3xl mx-auto space-y-3">
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-rlBlue via-purple-600 to-rlOrange rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-300"></div>
+                    <div class="relative flex items-center bg-rlCard border border-rlBorder rounded-xl overflow-hidden shadow-2xl focus-within:border-rlBlue transition">
+                        <div class="pl-4 text-gray-400 text-lg">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                        <input type="text" id="main-search-input" onkeyup="performSearch(this.value)" placeholder="Search 100+ mechanics (e.g. Mawkzy Flick, Zap Dash, Helidash, Psycho, Doomsee Dish)..." class="w-full bg-transparent px-4 py-4 text-white placeholder-gray-500 focus:outline-none text-base sm:text-lg">
+                        <button onclick="clearSearch()" id="clear-search-btn" class="hidden pr-3 text-gray-400 hover:text-white">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Filter Buttons -->
+                <div class="flex flex-wrap items-center justify-center gap-2 pt-2 text-xs">
+                    <span class="text-gray-400 font-mono">Trending Searches:</span>
+                    <button onclick="quickFilter('Speedflip')" class="px-2.5 py-1 rounded-md bg-rlCard hover:bg-rlBlue/20 border border-rlBorder hover:border-rlBlue/50 text-gray-300 hover:text-rlBlue transition">⚡ Speedflip</button>
+                    <button onclick="quickFilter('Psycho Pinch')" class="px-2.5 py-1 rounded-md bg-rlCard hover:bg-rose-500/20 border border-rlBorder hover:border-rose-500/50 text-gray-300 hover:text-rose-400 transition">🔥 Psycho Shot</button>
+                    <button onclick="quickFilter('Mawkzy Flick')" class="px-2.5 py-1 rounded-md bg-rlCard hover:bg-rlOrange/20 border border-rlBorder hover:border-rlOrange/50 text-gray-300 hover:text-rlOrange transition">🎯 Mawkzy Flick</button>
+                    <button onclick="quickFilter('Fetelix Flip')" class="px-2.5 py-1 rounded-md bg-rlCard hover:bg-amber-500/20 border border-rlBorder hover:border-amber-500/50 text-gray-300 hover:text-amber-300 transition">⚙️ Fetelix Flip</button>
+                    <button onclick="quickFilter('Chain Flip Reset')" class="px-2.5 py-1 rounded-md bg-rlCard hover:bg-purple-500/20 border border-rlBorder hover:border-purple-500/50 text-gray-300 hover:text-purple-300 transition">🌀 Multi Reset</button>
+                </div>
+            </div>
+
+            <div id="search-results-container" class="space-y-4 max-w-4xl mx-auto pt-4"></div>
+
+            <div id="default-dashboard-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+                <div onclick="switchTab('mechanics-timeline')" class="glass-panel p-6 rounded-2xl border border-rlBorder hover:border-rlBlue/60 transition cursor-pointer group hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-xl bg-rlBlue/10 border border-rlBlue/30 flex items-center justify-center text-rlBlue mb-4 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-circle-play text-xl"></i>
+                    </div>
+                    <h3 class="font-orbitron font-bold text-lg text-white mb-1 group-hover:text-rlBlue transition">100+ Video Tutorial Codex</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Watch video guides for every flick, dash, reset, kick-off, pinch, ceiling play, and defense mechanic.
+                    </p>
+                    <div class="mt-4 flex items-center text-xs font-semibold text-rlBlue">
+                        Explore Full Database <i class="fa-solid fa-arrow-right ml-1 transition group-hover:translate-x-1"></i>
+                    </div>
+                </div>
+
+                <div onclick="switchTab('tracker')" class="glass-panel p-6 rounded-2xl border border-rlBorder hover:border-rlOrange/60 transition cursor-pointer group hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-xl bg-rlOrange/10 border border-rlOrange/30 flex items-center justify-center text-rlOrange mb-4 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-chart-line text-xl"></i>
+                    </div>
+                    <h3 class="font-orbitron font-bold text-lg text-white mb-1 group-hover:text-rlOrange transition">Live RL Tracker</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Instant MMR lookup across Epic, Steam, PSN, and Xbox. Check live stats for pros like Zen, Vatira, BeastMode & Trk511.
+                    </p>
+                    <div class="mt-4 flex items-center text-xs font-semibold text-rlOrange">
+                        Search Live MMR <i class="fa-solid fa-arrow-right ml-1 transition group-hover:translate-x-1"></i>
+                    </div>
+                </div>
+
+                <div onclick="switchTab('calculator')" class="glass-panel p-6 rounded-2xl border border-rlBorder hover:border-rlPurple/60 transition cursor-pointer group hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-xl bg-rlPurple/10 border border-rlPurple/30 flex items-center justify-center text-rlPurple mb-4 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-graduation-cap text-xl"></i>
+                    </div>
+                    <h3 class="font-orbitron font-bold text-lg text-white mb-1 group-hover:text-rlPurple transition">Rank Skill Roadmap</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Tailored practice guides from Bronze to SSL paired with exact training pack codes and mechanics lists.
+                    </p>
+                    <div class="mt-4 flex items-center text-xs font-semibold text-rlPurple">
+                        Build Practice Plan <i class="fa-solid fa-arrow-right ml-1 transition group-hover:translate-x-1"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: MECHANICS CODEX WITH COMPLETE 100+ LIST ================= -->
+        <section id="tab-mechanics-timeline" class="tab-content hidden space-y-6">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-rlBorder pb-4">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-orbitron font-black text-white flex items-center gap-3">
+                        <i class="fa-solid fa-play text-rlOrange"></i> Mechanics Codex (100+ Mechanics)
+                    </h2>
+                    <p class="text-xs sm:text-sm text-gray-400 mt-1">
+                        Filter and watch step-by-step video execution guides across 11 disciplines.
+                    </p>
+                </div>
+                
+                <!-- Category Filter Pills -->
+                <div class="flex items-center space-x-2 overflow-x-auto pb-1 text-xs custom-scrollbar">
+                    <button onclick="filterMechanicsCategory('all')" class="cat-filter-btn px-3 py-1.5 rounded-lg bg-rlBlue text-white font-semibold whitespace-nowrap">All (100+)</button>
+                    <button onclick="filterMechanicsCategory('Movement')" class="cat-filter-btn px-3 py-1.5 rounded-lg bg-rlCard hover:bg-white/10 text-gray-300 border border-rlBorder whitespace-nowrap">Foundational</button>
+                    <button onclick="filterMechanicsCategory('Dashes')" class="cat-filter-btn px-3 py-1.5 rounded-lg bg-rlCard hover:bg-white/10 text-gray-300 border border-rlBorder whitespace-nowrap">Dashes & Speed</button>
+                    <button onclick="filterMechanicsCategory('Kickoffs')" class="cat-filter-btn px-3 py-1.5 rounded-lg bg-rlCard hover:bg-white/10 text-gray-300 border border-rlBorder whitespace-nowrap">Kickoffs</button>
+                    <button onclick="filterMechanicsCategory('Flicks')" class="cat-filter-btn px-3 py-1.5 rounded-lg bg-rlCard hover:bg-white/10 text-gray-300 border border-rlBorder whitespace-nowrap">Flicks Arsenal</button>
+                    <button onclick="filterMechanicsCategory('Defense')" class="cat-filter-btn px-3 py-1.5 rounded-lg bg-rlCard hover:bg-white/10 text-gray-300 border border-rlBorder whitespace-nowrap">Defense & 50s</button>
+                    <button onclick="filterMechanicsCategory('Aerials')" class="cat-filter-btn px-3 py-1.5 rounded-lg bg-rlCard hover:bg-white/10 text-gray-300 border border-rlBorder whitespace-nowrap">Aerial Control</button>
+                    <button onclick="filterMechanicsCategory('Wall & Ceiling')" class="cat-filter-btn px-3 py-1.5 rounded-lg bg-rlCard hover:bg-white/10 text-gray-300 border border-rlBorder whitespace-nowrap">Wall & Ceiling</button>
+                    <button onclick="filterMechanicsCategory('Air Dribbles & Touches')" class="cat-filter-btn px-3 py-1.5 rounded-lg bg-rlCard hover:bg-white/10 text-gray-300 border border-rlBorder whitespace-nowrap">Air Dribbles</button>
+                    <button onclick="filterMechanicsCategory('Resets & Stalls')" class="cat-filter-btn px-3 py-1.5 rounded-lg bg-rlCard hover:bg-white/10 text-gray-300 border border-rlBorder whitespace-nowrap">Flip Resets & Stalls</button>
+                    <button onclick="filterMechanicsCategory('Pogos & Pinches')" class="cat-filter-btn px-3 py-1.5 rounded-lg bg-rlCard hover:bg-white/10 text-gray-300 border border-rlBorder whitespace-nowrap">Pogos & Pinches</button>
+                </div>
+            </div>
+
+            <div id="timeline-cards-list" class="space-y-6"></div>
+        </section>
+
+        <!-- ================= JAVASCRIPT: EXHAUSTIVE 100+ MECHANICS DATABASE ================= -->
+        <script>
+            // Master Mechanics Database containing every item from the prompt
+            const mechanicsDB = [
+                // === 1. FOUNDATIONAL & GROUND MOVEMENT ===
+                {
+                    id: 'driving-steering',
+                    name: 'Driving & Steering',
+                    category: 'Movement',
+                    year: '2015',
+                    creator: 'Psyonix Base',
+                    tier: 'Bronze/Silver',
+                    rankReq: 'Bronze 1+',
+                    difficulty: 'Beginner',
+                    youtubeId: '7xT31Ew_lHQ',
+                    summary: 'Throttle control, steering circle tight angles, momentum preservation, and speed control.',
+                    execution: ['Use analog throttle for variable speed control.', 'Feather throttle on turns to maintain optimal turning radius.'],
+                    keybinds: 'R2 / Right Trigger + Left Analog',
+                    tags: ['driving', 'steering', 'ground', 'bronze']
+                },
+                {
+                    id: 'drifting-powersliding',
+                    name: 'Drifting / Powersliding',
+                    category: 'Movement',
+                    year: '2015',
+                    creator: 'Psyonix Base',
+                    tier: 'Bronze/Silver',
+                    rankReq: 'Bronze 1+',
+                    difficulty: 'Beginner',
+                    youtubeId: '4bWn3S7q_4E',
+                    summary: 'Holding Powerslide to execute quick directional changes without losing momentum.',
+                    execution: ['Tap or hold Powerslide while steering.', 'Release powerslide right before facing desired direction to lock traction.'],
+                    keybinds: 'L1 / Square',
+                    tags: ['powerslide', 'drift', 'ground', 'recovery']
+                },
+                {
+                    id: 'powerslide-cut',
+                    name: 'Powerslide Cut',
+                    category: 'Movement',
+                    year: '2016',
+                    creator: '1v1 Community',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Gold 2+',
+                    difficulty: 'Medium',
+                    youtubeId: '633C-uYJ1wU',
+                    summary: 'Quick tapping powerslide while moving at speed to cut the ball sideways instantly.',
+                    execution: ['Approach ball at angle.', 'Tap powerslide and turn stick sharply across ball vector.'],
+                    keybinds: 'Powerslide + Sharp Analog Cut',
+                    tags: ['powerslide cut', 'dribble', '1v1']
+                },
+                {
+                    id: 'single-jump',
+                    name: 'Single Jump',
+                    category: 'Movement',
+                    year: '2015',
+                    creator: 'Psyonix Base',
+                    tier: 'Bronze/Silver',
+                    rankReq: 'Bronze 1+',
+                    difficulty: 'Beginner',
+                    youtubeId: '1U4C1dJ09W8',
+                    summary: 'Basic vertical hop allowing car to leave the ground surface.',
+                    execution: ['Press jump button once.', 'Hold jump longer for higher vertical elevation.'],
+                    keybinds: 'X / A Button',
+                    tags: ['single jump', 'ground', 'bronze']
+                },
+                {
+                    id: 'double-jump',
+                    name: 'Double Jump',
+                    category: 'Movement',
+                    year: '2015',
+                    creator: 'Psyonix Base',
+                    tier: 'Bronze/Silver',
+                    rankReq: 'Bronze 1+',
+                    difficulty: 'Beginner',
+                    youtubeId: '1U4C1dJ09W8',
+                    summary: 'Pressing jump a second time within 1.5 seconds without pitch input to gain extra height.',
+                    execution: ['Jump once.', 'Keep analog stick neutral and press jump a second time.'],
+                    keybinds: 'Jump + Jump (Neutral Stick)',
+                    tags: ['double jump', 'height', 'bronze']
+                },
+                {
+                    id: 'flip-dodge',
+                    name: 'Flip / Dodge (Front, Back, Side, Diagonal)',
+                    category: 'Movement',
+                    year: '2015',
+                    creator: 'Psyonix Base',
+                    tier: 'Bronze/Silver',
+                    rankReq: 'Bronze 1+',
+                    difficulty: 'Beginner',
+                    youtubeId: '1U4C1dJ09W8',
+                    summary: 'Directional double jumps used for quick movement, shooting power, and supersonic speed.',
+                    execution: ['Jump once.', 'Push analog stick in desired direction and press jump again.'],
+                    keybinds: 'Jump + Analog Direction',
+                    tags: ['flip', 'dodge', 'front flip', 'backflip', 'side flip']
+                },
+                {
+                    id: 'flip-cancel',
+                    name: 'Flip Cancel',
+                    category: 'Movement',
+                    year: '2016',
+                    creator: 'RL Mechanics Pioneers',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Plat 1+',
+                    difficulty: 'Medium',
+                    youtubeId: 'fmJ3TGl414k',
+                    summary: 'Pulling analog stick opposite to flip direction mid-dodge to freeze rotation.',
+                    execution: ['Dodge forward or diagonally.', 'Instantly pull left stick straight down.'],
+                    keybinds: 'Flip + Pull Stick Opposite',
+                    tags: ['flip cancel', 'mechanics', 'half flip', 'speedflip']
+                },
+                {
+                    id: 'fast-aerial',
+                    name: 'Fast Aerial (Double-Jump Aerial)',
+                    category: 'Movement',
+                    year: '2016',
+                    creator: 'Early RL Pros',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Gold 3+',
+                    difficulty: 'Medium',
+                    youtubeId: '0gT-MuZ75lE',
+                    summary: 'Combining boost tilt back and a second jump to reach ceiling-high balls faster than standard aerials.',
+                    execution: ['Hold boost and lean back while pressing jump.', 'Release stick to neutral and press jump again while continuing boost.'],
+                    keybinds: 'Boost + Double Jump + Pitch Up',
+                    tags: ['fast aerial', 'aerial', 'plat']
+                },
+                {
+                    id: 'reverse-aerial',
+                    name: 'Reverse Aerial',
+                    category: 'Movement',
+                    year: '2016',
+                    creator: 'Pro Community',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 1+',
+                    difficulty: 'Medium',
+                    youtubeId: 'pG8WjVwZl-U',
+                    summary: 'Flying upside down or backwards to align underside/roof hits with optimal trajectory.',
+                    execution: ['Jump and air roll car 180 degrees upside down.', 'Feather boost while controlling inverted pitch.'],
+                    keybinds: 'Air Roll 180 + Pitch Control',
+                    tags: ['reverse aerial', 'upside down aerial']
+                },
+                {
+                    id: 'half-flip',
+                    name: 'Half-Flip',
+                    category: 'Movement',
+                    year: '2015',
+                    creator: 'Community Pioneers',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Gold 2+',
+                    difficulty: 'Easy-Medium',
+                    youtubeId: 'fmJ3TGl414k',
+                    summary: 'Canceling a backflip mid-rotation to execute an instantaneous 180-degree turnaround.',
+                    execution: ['Backflip.', 'Pull left stick UP to cancel.', 'Use Air Roll to flatten wheels onto floor.'],
+                    keybinds: 'Backflip + Stick UP + Air Roll',
+                    tags: ['half flip', 'recovery', '180 turn']
+                },
+                {
+                    id: 'landing-recovery-roll',
+                    name: 'Landing / Recovery Roll',
+                    category: 'Movement',
+                    year: '2015',
+                    creator: 'Base Mechanics',
+                    tier: 'Bronze/Silver',
+                    rankReq: 'Silver 1+',
+                    difficulty: 'Easy',
+                    youtubeId: '4bWn3S7q_4E',
+                    summary: 'Using Air Roll to ensure all four wheels land parallel to ground/wall surfaces while holding powerslide.',
+                    execution: ['Use Air Roll in air to orient wheels towards landing surface.', 'Hold Powerslide upon contact to preserve momentum.'],
+                    keybinds: 'Air Roll + Powerslide on Landing',
+                    tags: ['recovery', 'landing', 'powerslide']
+                },
+                {
+                    id: 'turtle-driving',
+                    name: 'Turtle Driving (Roof Driving / Turtle Slide)',
+                    category: 'Movement',
+                    year: '2015',
+                    creator: 'Freestylers',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Gold 1+',
+                    difficulty: 'Easy',
+                    youtubeId: '1U4C1dJ09W8',
+                    summary: 'Sliding on your car roof upside down while using boost or momentum.',
+                    execution: ['Flip car upside down.', 'Hold throttle/boost to slide along smooth roof surface.'],
+                    keybinds: 'Upside Down + Boost',
+                    tags: ['turtle', 'freestyle', 'roof driving']
+                },
+                {
+                    id: 'turtle-pop-flick',
+                    name: 'Turtle Pop / Turtle Flick',
+                    category: 'Movement',
+                    year: '2016',
+                    creator: 'Freestylers',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 1+',
+                    difficulty: 'Medium',
+                    youtubeId: '1U4C1dJ09W8',
+                    summary: 'Flipping while turtle sliding to pop the ball unexpectedly from upside down.',
+                    execution: ['Slide under ball upside down.', 'Execute flip to slap ball up with car belly.'],
+                    keybinds: 'Turtle Slide + Flip',
+                    tags: ['turtle pop', 'turtle flick', 'freestyle']
+                },
+
+                // === 2. ADVANCED DASHES & SPEED MECHANICS ===
+                {
+                    id: 'speedflip',
+                    name: 'Speedflip (Diagonal Flip Cancel)',
+                    category: 'Dashes',
+                    year: '2019',
+                    creator: 'Musty',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 1+',
+                    difficulty: 'Hard',
+                    youtubeId: 'AppW1BqC-kY',
+                    summary: 'The fastest kickoff and movement mechanic combining diagonal dodge with instant flip cancel.',
+                    execution: ['Diagonal dodge forward.', 'Instantly cancel flip by pulling stick straight down.', 'Air roll to land flat while boosting.'],
+                    keybinds: 'Diagonal Flip + Flip Cancel + Air Roll',
+                    tags: ['speedflip', 'musty', 'kickoff', 'speed']
+                },
+                {
+                    id: 'wave-dash',
+                    name: 'Wave Dash',
+                    category: 'Dashes',
+                    year: '2016',
+                    creator: 'RL Science',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Plat 1+',
+                    difficulty: 'Easy-Medium',
+                    youtubeId: 'g4B4sM1X1d8',
+                    summary: 'Dodging into floor surface right as 2 wheels touch for instant acceleration.',
+                    execution: ['Jump and tilt car back.', 'Wait for rear wheels to touch floor.', 'Front flip immediately.'],
+                    keybinds: 'Tilt Back + Front Flip on Wheel Contact',
+                    tags: ['wave dash', 'speed', 'recovery']
+                },
+                {
+                    id: 'chain-wave-dash',
+                    name: 'Chain Wave Dash / Multi-Dash',
+                    category: 'Dashes',
+                    year: '2019',
+                    creator: 'Sonic',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 1+',
+                    difficulty: 'Hard',
+                    youtubeId: 'N17vF8A9P-Q',
+                    summary: 'Chaining multiple wave dashes continuously across the floor using suspension bounce.',
+                    execution: ['Perform side wave dash.', 'Hold powerslide and tap jump as suspension rebounds to chain side dodge.'],
+                    keybinds: 'Side Wave Dash + Powerslide Jump Spam',
+                    tags: ['chain wave dash', 'multidash', 'gc']
+                },
+                {
+                    id: 'wall-wave-dash',
+                    name: 'Wall Wave Dash',
+                    category: 'Dashes',
+                    year: '2018',
+                    creator: 'Freestylers',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Champ 1+',
+                    difficulty: 'Medium-Hard',
+                    youtubeId: 'mN-W1J18V00',
+                    summary: 'Wave dashing off or onto sidewalls to maintain maximum speed down the pitch.',
+                    execution: ['Jump off wall at slight angle.', 'Wave dash back onto wall surface with side dodge.'],
+                    keybinds: 'Wall Jump + Side Dodge Wave Dash',
+                    tags: ['wall wave dash', 'wall dash', 'speed']
+                },
+                {
+                    id: 'zap-dash-curve-dash',
+                    name: 'Zap Dash / Curve Dash',
+                    category: 'Dashes',
+                    year: '2021',
+                    creator: 'RL Science',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 1+',
+                    difficulty: 'Hard',
+                    youtubeId: 'h7TzR6X8mGg',
+                    summary: 'Exploiting wall-to-floor curves or suspension rebound to land instant zero-boost dashes.',
+                    execution: ['Drive down wall curve to floor.', 'Tap jump right as front wheels compress to execute instant dash.'],
+                    keybinds: 'Curve Jump + Forward Dodge',
+                    tags: ['zap dash', 'curve dash', 'gc']
+                },
+                {
+                    id: 'wall-dash',
+                    name: 'Wall Dash',
+                    category: 'Dashes',
+                    year: '2021',
+                    creator: 'Sonic / Pros',
+                    tier: 'Champ/GC',
+                    rankReq: 'Champ 2+',
+                    difficulty: 'Hard',
+                    youtubeId: 'mN-W1J18V00',
+                    summary: 'Rapidly spamming side jumps along wall surface to gain instant max speed without boost.',
+                    execution: ['Drive along wall angled slightly down.', 'Spam jump button rapidly while holding car against wall.'],
+                    keybinds: 'Spam Jump + Air Roll Wall Angle',
+                    tags: ['wall dash', 'speed', 'champ']
+                },
+                {
+                    id: 'fetelix-flip',
+                    name: 'Fetelix Flip (Infinite Wall Jump)',
+                    category: 'Dashes',
+                    year: '2022',
+                    creator: 'Fetelix',
+                    tier: 'GC/SSL',
+                    rankReq: 'SSL',
+                    difficulty: 'Extreme',
+                    youtubeId: 'h7TzR6X8mGg',
+                    summary: 'Exploiting wall curve physics to obtain infinite flips in mid-air without touching full surfaces.',
+                    execution: ['Drive along specific wall ramp curve.', 'Wiggle car suspension to trick game physics into resetting jump.'],
+                    keybinds: 'Suspension Glitch Abuse',
+                    tags: ['fetelix flip', 'infinite wall jump', 'ssl']
+                },
+                {
+                    id: 'helicopter-dash-helidash',
+                    name: 'Helicopter Dash / Helidash',
+                    category: 'Dashes',
+                    year: '2022',
+                    creator: 'Freestyle Lab',
+                    tier: 'GC/SSL',
+                    rankReq: 'SSL',
+                    difficulty: 'Extreme',
+                    youtubeId: 'N17vF8A9P-Q',
+                    summary: 'Spinning car 360 degrees horizontally while chaining wave dashes across ground.',
+                    execution: ['Execute wave dash while initiating air roll spin.', 'Chain jump taps as car completes 360 rotation.'],
+                    keybinds: 'Air Roll Spin + Chain Wave Dash',
+                    tags: ['helidash', 'helicopter dash', 'freestyle']
+                },
+
+                // === 3. KICKOFFS & STARTS ===
+                {
+                    id: 'fast-kickoff',
+                    name: 'Fast Kickoff',
+                    category: 'Kickoffs',
+                    year: '2016',
+                    creator: 'Scrub Killa / Early Pros',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Plat 1+',
+                    difficulty: 'Medium',
+                    youtubeId: 'AppW1BqC-kY',
+                    summary: 'Diagonal dodge kickoff that reaches center ball before standard front-flip kickoffs.',
+                    execution: ['Drive forward, single jump early.', 'Diagonal dodge toward ball center and flip into ball.'],
+                    keybinds: 'Diagonal Dodge + Boost',
+                    tags: ['fast kickoff', 'kickoff', 'plat']
+                },
+                {
+                    id: 'speedflip-kickoff',
+                    name: 'Speedflip Kickoff',
+                    category: 'Kickoffs',
+                    year: '2019',
+                    creator: 'Musty',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 1+',
+                    difficulty: 'Hard',
+                    youtubeId: 'AppW1BqC-kY',
+                    summary: 'The meta kickoff used in RLCS combining speedflip diagonal cancel with center-ball contact.',
+                    execution: ['Execute speedflip immediately off spawn line.', 'Cancel flip, land flat, and flip into ball center.'],
+                    keybinds: 'Speedflip Cancel + Final Dodge',
+                    tags: ['speedflip kickoff', 'meta kickoff', 'rlcs']
+                },
+                {
+                    id: 'fake-kickoff',
+                    name: 'Fake Kickoff',
+                    category: 'Kickoffs',
+                    year: '2017',
+                    creator: 'Competitive Meta',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Gold 3+',
+                    difficulty: 'Easy',
+                    youtubeId: 'AppW1BqC-kY',
+                    summary: 'Pretending to go for kickoff but turning back to let teammate take possession from corner.',
+                    execution: ['Drive forward initially.', 'Turn off towards corner boost while teammate prepares to catch ball.'],
+                    keybinds: 'Turn Away + Boost Turn',
+                    tags: ['fake kickoff', 'kickoff', 'team strategy']
+                },
+                {
+                    id: 'losfretros-kickoff',
+                    name: 'LosFretros Kickoff',
+                    category: 'Kickoffs',
+                    year: '2018',
+                    creator: 'LosFretros',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 2+',
+                    difficulty: 'Hard',
+                    youtubeId: 'AppW1BqC-kY',
+                    summary: 'Wavedash setup kickoff that conserves 100% boost while reaching ball at supersonic speed.',
+                    execution: ['Drive forward, single jump, wavedash onto floor, then flip into ball.'],
+                    keybinds: 'Wave Dash + Kickoff Dodge',
+                    tags: ['losfretros kickoff', 'wavedash kickoff']
+                },
+                {
+                    id: 'scrub-killa-kickoff',
+                    name: 'Scrub Killa Kickoff',
+                    category: 'Kickoffs',
+                    year: '2017',
+                    creator: 'Scrub Killa',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 1+',
+                    difficulty: 'Medium-Hard',
+                    youtubeId: 'AppW1BqC-kY',
+                    summary: 'Front-flip cancel kickoff designed to dunk opponent hits and win 50/50s consistently.',
+                    execution: ['Drive forward, execute straight front flip cancel.', 'Land flat directly behind ball center.'],
+                    keybinds: 'Front Flip Cancel Kickoff',
+                    tags: ['scrub killa kickoff', '5050 kickoff']
+                },
+
+                // === 4. DRIBBLING, SHOTS & CATCHES ===
+                {
+                    id: 'ground-dribble',
+                    name: 'Ground Dribble / Hood Carry',
+                    category: 'Dribbles & Shots',
+                    year: '2015',
+                    creator: 'Base Mechanics',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Gold 1+',
+                    difficulty: 'Easy-Medium',
+                    youtubeId: 'U2uM3B-9a_4',
+                    summary: 'Carrying the ball balanced on roof hood to setup flicks and control match tempo.',
+                    execution: ['Drive underneath ball white indicator ring.', 'Feather throttle to keep ball centered on roof.'],
+                    keybinds: 'Throttle Micro-Adjustments',
+                    tags: ['ground dribble', 'hood carry', 'gold']
+                },
+                {
+                    id: 'bounce-dribble',
+                    name: 'Bounce Dribble',
+                    category: 'Dribbles & Shots',
+                    year: '2016',
+                    creator: '1v1 Community',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Plat 1+',
+                    difficulty: 'Medium',
+                    youtubeId: '633C-uYJ1wU',
+                    summary: 'Allowing ball to bounce repeatedly alongside car to set up sudden power shots or high cuts.',
+                    execution: ['Drive parallel with bouncing ball.', 'Hit ball right as it hits floor to pop high or strike net.'],
+                    keybinds: 'Timing + Steering Cut',
+                    tags: ['bounce dribble', '1v1', 'power shot']
+                },
+                {
+                    id: 'power-shot',
+                    name: 'Power Shot',
+                    category: 'Dribbles & Shots',
+                    year: '2015',
+                    creator: 'Base Mechanics',
+                    tier: 'Bronze/Silver',
+                    rankReq: 'Silver 2+',
+                    difficulty: 'Easy',
+                    youtubeId: 'z-mF7gN3E_o',
+                    summary: 'Striking ball immediately after it bounces off ground to generate maximum speed (100km/h+).',
+                    execution: ['Time arrival right after floor bounce.', 'Dodge forward/diagonally through ball center with car nose.'],
+                    keybinds: 'Timed Dodge into Bounce',
+                    tags: ['power shot', 'ground shot', 'silver']
+                },
+                {
+                    id: 'ground-shot',
+                    name: 'Ground Shot',
+                    category: 'Dribbles & Shots',
+                    year: '2015',
+                    creator: 'Base Mechanics',
+                    tier: 'Bronze/Silver',
+                    rankReq: 'Bronze 3+',
+                    difficulty: 'Easy',
+                    youtubeId: 'z-mF7gN3E_o',
+                    summary: 'Direct placement shots taken on rolling or low balls toward net corners.',
+                    execution: ['Align car angle with open goal space.', 'Dodge through ball with front corner bumper.'],
+                    keybinds: 'Corner Bumper Dodge',
+                    tags: ['ground shot', 'shooting']
+                },
+                {
+                    id: 'air-roll-shot',
+                    name: 'Air Roll Shot',
+                    category: 'Dribbles & Shots',
+                    year: '2016',
+                    creator: 'Pro Scene',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Plat 1+',
+                    difficulty: 'Medium',
+                    youtubeId: 'z-mF7gN3E_o',
+                    summary: 'Air rolling car right before dodging into ball to angle power shots into top corners.',
+                    execution: ['Jump towards incoming ball.', 'Air roll 45-90 degrees to side.', 'Dodge into ball to hit with car roof corner.'],
+                    keybinds: 'Air Roll + Dodge Angle',
+                    tags: ['air roll shot', 'shooting', 'plat']
+                },
+                {
+                    id: 'hook-shot',
+                    name: 'Hook Shot',
+                    category: 'Dribbles & Shots',
+                    year: '2016',
+                    creator: '1v1 Pros',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Gold 3+',
+                    difficulty: 'Easy-Medium',
+                    youtubeId: '633C-uYJ1wU',
+                    summary: 'Curving wide around rolling ball and swinging back inward sharply to blast shot on goal.',
+                    execution: ['Drive wide to side of ball.', 'Hook steering wheel back toward net and strike ball center.'],
+                    keybinds: 'Wide Curve Steering + Strike',
+                    tags: ['hook shot', '1v1', 'shooting']
+                },
+                {
+                    id: 'chip-shot-lob-shot',
+                    name: 'Chip Shot / Lob Shot',
+                    category: 'Dribbles & Shots',
+                    year: '2015',
+                    creator: 'Base Mechanics',
+                    tier: 'Bronze/Silver',
+                    rankReq: 'Silver 1+',
+                    difficulty: 'Easy',
+                    youtubeId: 'z-mF7gN3E_o',
+                    summary: 'Hitting rolling ball softly with front bumper to chip it over diving goalies.',
+                    execution: ['Drive directly into rolling ball without jumping.', 'Nose of car pops ball high over goalie.'],
+                    keybinds: 'No-Jump Bumper Contact',
+                    tags: ['chip shot', 'lob shot']
+                },
+                {
+                    id: 'drop-shot-mechanic',
+                    name: 'Drop Shot',
+                    category: 'Dribbles & Shots',
+                    year: '2017',
+                    creator: 'Community',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Gold 2+',
+                    difficulty: 'Easy-Medium',
+                    youtubeId: 'z-mF7gN3E_o',
+                    summary: 'Single-jumping and dropping car roof onto bouncing ball to force downward ground bounce.',
+                    execution: ['Jump above ball.', 'Pancake roof downward onto ball top.'],
+                    keybinds: 'Roof Tap',
+                    tags: ['drop shot', 'pancake']
+                },
+                {
+                    id: 'catching-trapping-ground',
+                    name: 'Catching / Trapping (Ground & Soft Catch)',
+                    category: 'Dribbles & Shots',
+                    year: '2015',
+                    creator: 'Base Mechanics',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Gold 2+',
+                    difficulty: 'Medium',
+                    youtubeId: 'Jb2bF4g-2oE',
+                    summary: 'Cushioning high falling balls onto car hood or side to kill bounce and gain instant control.',
+                    execution: ['Match ball falling speed.', 'Position car underneath and tap reverse/powerslide upon contact.'],
+                    keybinds: 'Soft Touch + Powerslide',
+                    tags: ['catching', 'trapping', 'soft catch']
+                },
+                {
+                    id: 'air-catch',
+                    name: 'Air Catch',
+                    category: 'Dribbles & Shots',
+                    year: '2018',
+                    creator: 'Freestylers / Pros',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Champ 1+',
+                    difficulty: 'Hard',
+                    youtubeId: '5B4TOgknY2A',
+                    summary: 'Flying up and catching falling ball in mid-air onto car nose to transition straight into air dribble.',
+                    execution: ['Fly up to meet falling ball.', 'Match ball speed and angle car nose under ball center with soft boost.'],
+                    keybinds: 'Mid-Air Nose Alignment',
+                    tags: ['air catch', 'air dribble setup']
+                },
+                {
+                    id: '360-spin-dribble',
+                    name: '360 Dribble / Spin Dribble',
+                    category: 'Dribbles & Shots',
+                    year: '2019',
+                    creator: 'Evample',
+                    tier: 'Champ/GC',
+                    rankReq: 'Champ 2+',
+                    difficulty: 'Hard',
+                    youtubeId: 'y-7-V7H9pT8',
+                    summary: 'Spinning car 360 degrees using powerslide while holding ball balanced on roof.',
+                    execution: ['Dribble ball on roof.', 'Hold powerslide and initiate 360 ground turn without dropping ball.'],
+                    keybinds: 'Powerslide 360 Balance',
+                    tags: ['360 dribble', 'evample', 'freestyle']
+                },
+
+                // === 5. FLICKS (COMPLETE ARSENAL) ===
+                {
+                    id: 'front-flip-flick',
+                    name: 'Front Flip Flick',
+                    category: 'Flicks',
+                    year: '2015',
+                    creator: 'Early Players',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Gold 1+',
+                    difficulty: 'Easy',
+                    youtubeId: 'z-mF7gN3E_o',
+                    summary: 'Forward dodge flick carrying ball over defenders.',
+                    execution: ['Carry ball forward on hood.', 'Single jump and front flip immediately.'],
+                    keybinds: 'Jump + Front Flip',
+                    tags: ['front flip flick', 'flicks']
+                },
+                {
+                    id: 'side-flick',
+                    name: 'Side Flick',
+                    category: 'Flicks',
+                    year: '2015',
+                    creator: 'Early Players',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Gold 2+',
+                    difficulty: 'Easy',
+                    youtubeId: 'z-mF7gN3E_o',
+                    summary: 'Side dodge flick whipping ball horizontally past goalies.',
+                    execution: ['Balance ball slightly on car side.', 'Single jump and side flip.'],
+                    keybinds: 'Jump + Side Dodge',
+                    tags: ['side flick', 'flicks']
+                },
+                {
+                    id: 'backflip-flick',
+                    name: 'Backflip Flick',
+                    category: 'Flicks',
+                    year: '2015',
+                    creator: 'Early Players',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Gold 2+',
+                    difficulty: 'Easy-Medium',
+                    youtubeId: 'z-mF7gN3E_o',
+                    summary: 'Positioning ball on rear hood and backflipping to launch high arc lob flick.',
+                    execution: ['Let ball settle on rear roof.', 'Jump and backflip instantly.'],
+                    keybinds: 'Jump + Backflip',
+                    tags: ['backflip flick', 'lob flick']
+                },
+                {
+                    id: '45-degree-flick',
+                    name: '45-Degree Flick',
+                    category: 'Flicks',
+                    year: '2016',
+                    creator: 'MQS / 1v1 Players',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 1+',
+                    difficulty: 'Medium',
+                    youtubeId: 'T85bQ-mQ4i0',
+                    summary: 'Diagonal car angle flick generating up to 110km/h velocity using corner hitbox.',
+                    execution: ['Jump while carrying ball.', 'Air roll car 45 degrees to side.', 'Diagonal backflip.'],
+                    keybinds: 'Air Roll 45 + Diagonal Backflip',
+                    tags: ['45 flick', 'power flick']
+                },
+                {
+                    id: '90-degree-flick',
+                    name: '90-Degree Flick',
+                    category: 'Flicks',
+                    year: '2016',
+                    creator: '1v1 Scene',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 2+',
+                    difficulty: 'Medium-Hard',
+                    youtubeId: 'T85bQ-mQ4i0',
+                    summary: 'Turning car 90 degrees sideways in air before backflipping for high lateral whip.',
+                    execution: ['Jump with ball.', 'Yaw/Air roll car 90 degrees perpendicular.', 'Backflip.'],
+                    keybinds: '90 Turn + Backflip',
+                    tags: ['90 flick', 'flicks']
+                },
+                {
+                    id: '180-degree-flick',
+                    name: '180-Degree Flick',
+                    category: 'Flicks',
+                    year: '2016',
+                    creator: '1v1 Community',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 2+',
+                    difficulty: 'Medium-Hard',
+                    youtubeId: 'T85bQ-mQ4i0',
+                    summary: 'Spinning car backwards 180 degrees under ball before backflipping to flick overhead.',
+                    execution: ['Jump with ball.', 'Air roll 180 backwards.', 'Execute front flip or backflip to launch.'],
+                    keybinds: '180 Spin + Flip',
+                    tags: ['180 flick', 'flicks']
+                },
+                {
+                    id: 'musty-flick',
+                    name: 'Musty Flick',
+                    category: 'Flicks',
+                    year: '2017',
+                    creator: 'amustycow',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Champ 1+',
+                    difficulty: 'Hard',
+                    youtubeId: 'QN-6mS9uL9E',
+                    summary: 'Tilting car nose down past 90 degrees and backflipping to propel ball forward violently.',
+                    execution: ['Dribble ball.', 'Jump and tilt nose down past 90 degrees.', 'Backflip.'],
+                    keybinds: 'Nose Down > 90 + Backflip',
+                    tags: ['musty flick', 'musty', 'champ']
+                },
+                {
+                    id: 'breezi-flick',
+                    name: 'Breezi Flick',
+                    category: 'Flicks',
+                    year: '2018',
+                    creator: 'Breezi',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 2+',
+                    difficulty: 'Expert',
+                    youtubeId: 'P1J4YwL6y4M',
+                    summary: 'Tornado spin momentum shift into a Musty flick setup on ground or in air.',
+                    execution: ['Jump with ball, initiate Tornado Spin.', 'Rotate car around into Musty angle.', 'Backflip.'],
+                    keybinds: 'Tornado Spin + Musty Backflip',
+                    tags: ['breezi flick', 'breezi', 'gc']
+                },
+                {
+                    id: 'classy-flick',
+                    name: 'Classy Flick',
+                    category: 'Flicks',
+                    year: '2020',
+                    creator: 'Classy',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 1+',
+                    difficulty: 'Hard',
+                    youtubeId: 'Z9kP3E5xX70',
+                    summary: 'Backwards air-roll flick where rear bumper scoops ball overhead from underneath.',
+                    execution: ['Air roll backwards facing away from ball.', 'Side/backflip to scoop ball backwards.'],
+                    keybinds: 'Backward Air Roll + Scoop Flip',
+                    tags: ['classy flick', 'freestyle']
+                },
+                {
+                    id: 'mawkzy-flick',
+                    name: 'Mawkzy Flick',
+                    category: 'Flicks',
+                    year: '2022',
+                    creator: 'Mawkzy',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 2+',
+                    difficulty: 'Extreme',
+                    youtubeId: 'J4m6C01w6D8',
+                    summary: '120km/h+ hyper-consistent 45-degree flick variant using micro-delays before backflipping.',
+                    execution: ['Balance ball back on hood.', 'Jump, air roll 45 degrees, micro-delay, then backflip.'],
+                    keybinds: 'Micro-Delayed 45 Backflip',
+                    tags: ['mawkzy flick', 'mawkzy', '1v1', 'ssl']
+                },
+                {
+                    id: 'evample-flick',
+                    name: 'Evample Flick',
+                    category: 'Flicks',
+                    year: '2021',
+                    creator: 'Evample',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 1+',
+                    difficulty: 'Hard',
+                    youtubeId: 'y-7-V7H9pT8',
+                    summary: 'Spinning car on floor with powerslide before popping an instant flick.',
+                    execution: ['Powerslide spin 180 degrees on ground under ball.', 'Jump and backflip instantly.'],
+                    keybinds: 'Powerslide Spin + Instant Flip',
+                    tags: ['evample flick', 'powerslide flick']
+                },
+                {
+                    id: 'delayed-flick-scoop',
+                    name: 'Delayed Flick / Scoop Flick',
+                    category: 'Flicks',
+                    year: '2017',
+                    creator: '1v1 Community',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 2+',
+                    difficulty: 'Medium',
+                    youtubeId: '9v64W9h74wA',
+                    summary: 'Jumping with ball and waiting until defender jumps before flipping at last millisecond.',
+                    execution: ['Jump carrying ball.', 'Hold flip until 1.2 seconds elapse.', 'Dodge to scoop over defender.'],
+                    keybinds: 'Delayed Dodge Timing',
+                    tags: ['delayed flick', 'scoop flick']
+                },
+                {
+                    id: 'low-flick',
+                    name: 'Low Flick',
+                    category: 'Flicks',
+                    year: '2018',
+                    creator: '1v1 Meta',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 1+',
+                    difficulty: 'Medium',
+                    youtubeId: 'T85bQ-mQ4i0',
+                    summary: 'Flicking ball fast and flat right above defender hood height rather than high arc.',
+                    execution: ['Keep ball low on front nose.', 'Single jump and flip forward immediately.'],
+                    keybinds: 'Low Nose Front Flip',
+                    tags: ['low flick', '1v1 flick']
+                },
+                {
+                    id: 'tornado-flick',
+                    name: 'Tornado Flick',
+                    category: 'Flicks',
+                    year: '2018',
+                    creator: 'Freestylers',
+                    tier: 'Champ/GC',
+                    rankReq: 'Champ 2+',
+                    difficulty: 'Hard',
+                    youtubeId: 'P1J4YwL6y4M',
+                    summary: 'Using short Tornado spin setup under dribbled ball to flick sideways.',
+                    execution: ['Jump with ball.', 'Initiate Tornado spin for 90 degrees.', 'Side flip into ball.'],
+                    keybinds: 'Tornado Spin + Side Dodge',
+                    tags: ['tornado flick', 'freestyle']
+                },
+                {
+                    id: 'wizard-flick',
+                    name: 'Wizard Flick',
+                    category: 'Flicks',
+                    year: '2019',
+                    creator: 'Wizard',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 1+',
+                    difficulty: 'Hard',
+                    youtubeId: 'Z9kP3E5xX70',
+                    summary: '45-degree flick starting with car facing backward upside down under ball.',
+                    execution: ['Air roll upside down facing backwards under ball.', 'Diagonal backflip to launch.'],
+                    keybinds: 'Upside Down Backwards Flip',
+                    tags: ['wizard flick', 'freestyle']
+                },
+                {
+                    id: 'kazi-flick',
+                    name: 'Kazi Flick',
+                    category: 'Flicks',
+                    year: '2020',
+                    creator: 'Kazi',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 2+',
+                    difficulty: 'Expert',
+                    youtubeId: 'P1J4YwL6y4M',
+                    summary: 'Reverse tornado spin variant producing deceptive pop flicks.',
+                    execution: ['Spin opposite DAR direction under ball.', 'Backflip as nose points up.'],
+                    keybinds: 'Reverse Tornado + Backflip',
+                    tags: ['kazi flick', 'freestyle']
+                },
+                {
+                    id: 'munoz-flick',
+                    name: 'Muñoz Flick',
+                    category: 'Flicks',
+                    year: '2021',
+                    creator: 'Muñoz',
+                    tier: 'GC/SSL',
+                    rankReq: 'SSL',
+                    difficulty: 'Extreme',
+                    youtubeId: 'J4m6C01w6D8',
+                    summary: 'Sideways flip-cancel flick that trajectory-shifts ball mid-flight.',
+                    execution: ['Air roll 90 degrees.', 'Side flip and cancel stick horizontally.'],
+                    keybinds: 'Horizontal Flip Cancel',
+                    tags: ['munoz flick', 'ssl flick']
+                },
+
+                // === 6. DEFENSE, SHADOWING & CHALLENGES ===
+                {
+                    id: 'shadow-defense',
+                    name: 'Shadow Defense',
+                    category: 'Defense',
+                    year: '2017',
+                    creator: 'SunlessKhan / 1v1 Pros',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Plat 1+',
+                    difficulty: 'Medium',
+                    youtubeId: '1U4C1dJ09W8',
+                    summary: 'Driving parallel ahead of attacker matching speed to cover all shooting angles.',
+                    execution: ['Drive back toward your goal 2-3 car lengths ahead.', 'Match speed and jump when attacker shoots.'],
+                    keybinds: 'Speed Match + Camera Lock',
+                    tags: ['shadow defense', 'defense', '1v1']
+                },
+                {
+                    id: 'fake-challenge',
+                    name: 'Fake Challenge',
+                    category: 'Defense',
+                    year: '2018',
+                    creator: 'Competitive Meta',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Plat 2+',
+                    difficulty: 'Easy-Medium',
+                    youtubeId: '1U4C1dJ09W8',
+                    summary: 'Driving aggressively toward opponent to force a panic shot, then braking to collect ball.',
+                    execution: ['Drive fast at opponent carrying ball.', 'Brake sharply before making contact and turn back.'],
+                    keybinds: 'Drive Fast + Sharp Brake',
+                    tags: ['fake challenge', 'defense', 'mindgames']
+                },
+                {
+                    id: '50-50-challenge',
+                    name: '50/50 (Fifty-Fifty Challenge)',
+                    category: 'Defense',
+                    year: '2015',
+                    creator: 'Base Mechanics',
+                    tier: 'Bronze/Silver',
+                    rankReq: 'Silver 1+',
+                    difficulty: 'Easy-Medium',
+                    youtubeId: '1U4C1dJ09W8',
+                    summary: 'Contesting opponent hits by positioning car center between ball and your goal.',
+                    execution: ['Place car center directly behind ball vector.', 'Single jump and flip into ball center.'],
+                    keybinds: 'Car Center Block',
+                    tags: ['5050', 'challenge', 'defense']
+                },
+                {
+                    id: 'low-50-50',
+                    name: 'Low 50/50',
+                    category: 'Defense',
+                    year: '2018',
+                    creator: 'Fireburner / 1v1 Meta',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Plat 1+',
+                    difficulty: 'Medium',
+                    youtubeId: '1U4C1dJ09W8',
+                    summary: 'Staying grounded with powerslide under jumping opponent to force ball over/under them safely.',
+                    execution: ['Do not jump.', 'Drive car nose under opponent flip and hold powerslide.'],
+                    keybinds: 'Grounded Bumper Block',
+                    tags: ['low 5050', 'fireburner', '1v1']
+                },
+                {
+                    id: 'backboard-clear',
+                    name: 'Backboard Clear',
+                    category: 'Defense',
+                    year: '2016',
+                    creator: 'RLCS Defensive Tactics',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 2+',
+                    difficulty: 'Medium',
+                    youtubeId: '2b7A5y0-z8M',
+                    summary: 'Positioning on wall above goal crossbar to clear high incoming shots before net.',
+                    execution: ['Drive up backwall above goal.', 'Jump out and clear ball away to sidewall.'],
+                    keybinds: 'Wall Jump Clear',
+                    tags: ['backboard clear', 'defense']
+                },
+                {
+                    id: 'corner-clear',
+                    name: 'Corner Clear',
+                    category: 'Defense',
+                    year: '2015',
+                    creator: 'Base Mechanics',
+                    tier: 'Bronze/Silver',
+                    rankReq: 'Bronze 3+',
+                    difficulty: 'Easy',
+                    youtubeId: '2b7A5y0-z8M',
+                    summary: 'Booming ball around corner curve away from your net into opponent half.',
+                    execution: ['Drive into ball at corner ramp angle.', 'Hit ball into wall curve to wrap around pitch.'],
+                    keybinds: 'Corner Wrap Hit',
+                    tags: ['corner clear', 'defense']
+                },
+                {
+                    id: 'doomsee-dish',
+                    name: 'Doomsee Dish',
+                    category: 'Defense',
+                    year: '2016',
+                    creator: 'Doomsee',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 2+',
+                    difficulty: 'Medium-Hard',
+                    youtubeId: '2b7A5y0-z8M',
+                    summary: 'Driving up backwall over goal and jumping out to dunk backboard rebound into net.',
+                    execution: ['Drive on back wall above enemy goal.', 'Jump out over crossbar and flip into ball.'],
+                    keybinds: 'Backwall Jump Dunk',
+                    tags: ['doomsee dish', 'backwall shot']
+                },
+                {
+                    id: 'squishy-save',
+                    name: 'Squishy Save',
+                    category: 'Defense',
+                    year: '2017',
+                    creator: 'SquishyMuffinz',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Champ 1+',
+                    difficulty: 'Medium-Hard',
+                    youtubeId: '1U4C1dJ09W8',
+                    summary: 'Driving inside your own net onto ceiling/back wall to fly out and save goal shots.',
+                    execution: ['Drive into net frame onto inside ceiling.', 'Fly out from net interior to save high ball.'],
+                    keybinds: 'Net Interior Aerial',
+                    tags: ['squishy save', 'save', 'net']
+                },
+                {
+                    id: 'ceiling-challenge-save',
+                    name: 'Ceiling Challenge / Ceiling Save',
+                    category: 'Defense',
+                    year: '2019',
+                    creator: 'Pro Meta',
+                    tier: 'Champ/GC',
+                    rankReq: 'Champ 2+',
+                    difficulty: 'Hard',
+                    youtubeId: 'bAolF6Gq11w',
+                    summary: 'Dropping off ceiling to challenge attacker air dribbles from above.',
+                    execution: ['Drive onto ceiling above goal.', 'Fall off and challenge attacker aerial from top-down angle.'],
+                    keybinds: 'Ceiling Drop Challenge',
+                    tags: ['ceiling save', 'defense']
+                },
+
+                // === 7. AERIAL CONTROL & SPINS ===
+                {
+                    id: 'directional-air-roll',
+                    name: 'Directional Air Roll (Air Roll Left / Right)',
+                    category: 'Aerials',
+                    year: '2018',
+                    creator: 'Pro Scene',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 1+',
+                    difficulty: 'Hard',
+                    youtubeId: 'pG8WjVwZl-U',
+                    summary: 'Dedicated button binds for continuous 3D rotation and tornado spins.',
+                    execution: ['Bind Air Roll Left or Right to L1/R1.', 'Hold button and move analog stick to direct flight path.'],
+                    keybinds: 'L1 (ARL) or R1 (ARR)',
+                    tags: ['air roll left', 'air roll right', 'dar']
+                },
+                {
+                    id: 'free-air-roll',
+                    name: 'Free Air Roll / Manual Air Roll',
+                    category: 'Aerials',
+                    year: '2015',
+                    creator: 'Base Mechanics',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Gold 1+',
+                    difficulty: 'Easy-Medium',
+                    youtubeId: 'pG8WjVwZl-U',
+                    summary: 'Holding modifier button while using analog stick to roll car body left or right.',
+                    execution: ['Hold Air Roll modifier button.', 'Move left analog stick left or right.'],
+                    keybinds: 'Air Roll Button + Analog Stick',
+                    tags: ['free air roll', 'manual air roll']
+                },
+                {
+                    id: 'tornado-spin',
+                    name: 'Tornado Spin',
+                    category: 'Aerials',
+                    year: '2017',
+                    creator: 'Freestylers',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 2+',
+                    difficulty: 'Medium',
+                    youtubeId: 'wWvJ69G9w_4',
+                    summary: 'Holding Air Roll Left while pushing analog stick Right (or vice-versa) for propeller spin.',
+                    execution: ['Hold Air Roll Left.', 'Push analog stick straight RIGHT.'],
+                    keybinds: 'ARL + Stick Right',
+                    tags: ['tornado spin', 'dar', 'freestyle']
+                },
+                {
+                    id: 'kuxir-twist',
+                    name: 'Kuxir Twist',
+                    category: 'Aerials',
+                    year: '2015',
+                    creator: 'Kuxir97',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Plat 2+',
+                    difficulty: 'Medium',
+                    youtubeId: 'wWvJ69G9w_4',
+                    summary: 'Air rolling car diagonally backward while boosting to turn aerial direction sharply.',
+                    execution: ['Hold Air Roll.', 'Pull stick diagonally back-left or back-right while boosting.'],
+                    keybinds: 'Air Roll + Diagonal Back Pitch',
+                    tags: ['kuxir twist', 'aerial twist']
+                },
+                {
+                    id: 'clockwork-reverse-tornado',
+                    name: 'Clockwork / Reverse Tornado Spin',
+                    category: 'Aerials',
+                    year: '2019',
+                    creator: 'Freestylers',
+                    tier: 'Champ/GC',
+                    rankReq: 'Champ 2+',
+                    difficulty: 'Hard',
+                    youtubeId: 'wWvJ69G9w_4',
+                    summary: 'Holding Air Roll Left while pushing stick LEFT for inverted spinning motion.',
+                    execution: ['Hold Air Roll Left.', 'Push analog stick straight LEFT.'],
+                    keybinds: 'ARL + Stick Left',
+                    tags: ['reverse tornado', 'clockwork spin']
+                },
+
+                // === 8. WALL & CEILING MASTERY ===
+                {
+                    id: 'wall-shot',
+                    name: 'Wall Shot',
+                    category: 'Wall & Ceiling',
+                    year: '2015',
+                    creator: 'Base Mechanics',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Gold 2+',
+                    difficulty: 'Easy-Medium',
+                    youtubeId: 'Z9gXW4K0_s0',
+                    summary: 'Driving up wall surface and flipping off to strike ball toward net.',
+                    execution: ['Drive up wall with ball.', 'Jump off wall surface and dodge into ball.'],
+                    keybinds: 'Wall Jump + Dodge',
+                    tags: ['wall shot', 'wall mechanics']
+                },
+                {
+                    id: 'wall-read',
+                    name: 'Wall Read',
+                    category: 'Wall & Ceiling',
+                    year: '2016',
+                    creator: 'Pro Community',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Plat 1+',
+                    difficulty: 'Medium',
+                    youtubeId: 'Z9gXW4K0_s0',
+                    summary: 'Predicting where ball will bounce off sidewall to meet it in air or on wall.',
+                    execution: ['Track ball speed toward wall.', 'Pre-position car at predicted bounce point.'],
+                    keybinds: 'Bounce Trajectory Prediction',
+                    tags: ['wall read', 'reading bounces']
+                },
+                {
+                    id: 'wall-pinch-clear',
+                    name: 'Wall Pinch Clear',
+                    category: 'Wall & Ceiling',
+                    year: '2016',
+                    creator: 'Defensive Meta',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 1+',
+                    difficulty: 'Medium',
+                    youtubeId: 'gT594-c1XwI',
+                    summary: 'Pinching ball against side wall to launch 120km/h clear down field.',
+                    execution: ['Drive along wall alongside ball.', 'Dodge into ball as it contacts wall face.'],
+                    keybinds: 'Wall Pinch Dodge',
+                    tags: ['wall pinch', 'clear']
+                },
+                {
+                    id: 'ceiling-shot',
+                    name: 'Ceiling Shot',
+                    category: 'Wall & Ceiling',
+                    year: '2017',
+                    creator: 'SquishyMuffinz',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Champ 1+',
+                    difficulty: 'Hard',
+                    youtubeId: 'bAolF6Gq11w',
+                    summary: 'Driving onto ceiling to fall off without jumping, retaining dodge flip indefinitely.',
+                    execution: ['Pop ball high towards ceiling.', 'Drive onto ceiling and fall off without jumping.', 'Dodge into ball.'],
+                    keybinds: 'Ceiling Fall + Preserved Dodge',
+                    tags: ['ceiling shot', 'squishy', 'champ']
+                },
+                {
+                    id: 'ceiling-drop-fall',
+                    name: 'Ceiling Drop / Ceiling Fall',
+                    category: 'Wall & Ceiling',
+                    year: '2018',
+                    creator: 'Pro Meta',
+                    tier: 'Champ/GC',
+                    rankReq: 'Champ 1+',
+                    difficulty: 'Medium-Hard',
+                    youtubeId: 'bAolF6Gq11w',
+                    summary: 'Falling off ceiling and using preserved flip to pass or 50/50 instead of direct shooting.',
+                    execution: ['Drive onto ceiling.', 'Let car fall off, wait for goalie response, flip late.'],
+                    keybinds: 'Ceiling Fall Timing',
+                    tags: ['ceiling drop', 'pass']
+                },
+                {
+                    id: 'ceiling-pinch',
+                    name: 'Ceiling Pinch',
+                    category: 'Wall & Ceiling',
+                    year: '2019',
+                    creator: 'Freestylers',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 1+',
+                    difficulty: 'Hard',
+                    youtubeId: '8S8-Y8Y9X-0',
+                    summary: 'Pinching ball against ceiling panel to blast it downward into net.',
+                    execution: ['Pop ball to ceiling.', 'Fly up and dodge into ball directly against ceiling surface.'],
+                    keybinds: 'Ceiling Panel Pinch',
+                    tags: ['ceiling pinch', 'pinch']
+                },
+                {
+                    id: 'ceiling-to-flip-reset',
+                    name: 'Ceiling to Flip Reset',
+                    category: 'Wall & Ceiling',
+                    year: '2020',
+                    creator: 'Freestylers',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 2+',
+                    difficulty: 'Expert',
+                    youtubeId: 'Z_8-QW0A3jA',
+                    summary: 'Falling off ceiling, using saved dodge to get a flip reset touch on ball, then shooting.',
+                    execution: ['Fall off ceiling.', 'Dodge into ball belly to get reset, then flick.'],
+                    keybinds: 'Ceiling Fall + Reset Touch',
+                    tags: ['ceiling flip reset', 'freestyle']
+                },
+                {
+                    id: 'ceiling-musty',
+                    name: 'Ceiling Musty',
+                    category: 'Wall & Ceiling',
+                    year: '2019',
+                    creator: 'Musty / Freestylers',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 1+',
+                    difficulty: 'Hard',
+                    youtubeId: 'QN-6mS9uL9E',
+                    summary: 'Falling off ceiling and executing a Musty flick backflip in mid-air.',
+                    execution: ['Fall off ceiling.', 'Tilt nose down past 90 degrees.', 'Backflip into ball.'],
+                    keybinds: 'Ceiling Fall + Musty Tilt + Backflip',
+                    tags: ['ceiling musty', 'musty']
+                },
+
+                // === 9. AIR DRIBBLES, TOUCHES & DOUBLE TAPS ===
+                {
+                    id: 'air-dribble-wall-ground',
+                    name: 'Air Dribble (Ground-to-Air & Wall-to-Air)',
+                    category: 'Air Dribbles & Touches',
+                    year: '2016',
+                    creator: 'Kronovi & Freestylers',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 2+',
+                    difficulty: 'Medium-Hard',
+                    youtubeId: '5B4TOgknY2A',
+                    summary: 'Carrying ball through air with feathered boost touches into goal.',
+                    execution: ['Pop ball off wall or ground.', 'Jump, match ball speed, feather boost under ball center.'],
+                    keybinds: 'Feathered Boost Aerial',
+                    tags: ['air dribble', 'wall to air', 'ground to air']
+                },
+                {
+                    id: 'air-dribble-bump',
+                    name: 'Air Dribble Bump',
+                    category: 'Air Dribbles & Touches',
+                    year: '2018',
+                    creator: '1v1 Pros / Heat',
+                    tier: 'Champ/GC',
+                    rankReq: 'Champ 1+',
+                    difficulty: 'Hard',
+                    youtubeId: '5B4TOgknY2A',
+                    summary: 'Air dribbling ball towards goal, then leaving ball to demolish/bump airborne goalie.',
+                    execution: ['Start air dribble.', 'Ditch ball trajectory and boost straight into airborne defender.'],
+                    keybinds: 'Air Dribble + Goal Demolition',
+                    tags: ['air dribble bump', '1v1', 'bump']
+                },
+                {
+                    id: 'double-tap-double-touch',
+                    name: 'Double Tap / Double Touch',
+                    category: 'Air Dribbles & Touches',
+                    year: '2016',
+                    creator: 'Deevo',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Champ 1+',
+                    difficulty: 'Medium-Hard',
+                    youtubeId: 'L8E_6_0_7_M',
+                    summary: 'Hitting ball against backboard in air, then flying up to score the rebounding touch.',
+                    execution: ['Shoot ball high against backboard.', 'Maintain aerial flight to hit rebound into net.'],
+                    keybinds: 'Backboard Rebound Follow',
+                    tags: ['double tap', 'double touch', 'deevo']
+                },
+                {
+                    id: 'self-setup-double-tap',
+                    name: 'Self-Setup Double Tap',
+                    category: 'Air Dribbles & Touches',
+                    year: '2017',
+                    creator: 'RLCS Meta',
+                    tier: 'Champ/GC',
+                    rankReq: 'Champ 2+',
+                    difficulty: 'Hard',
+                    youtubeId: 'L8E_6_0_7_M',
+                    summary: 'Pop ball from ground/wall yourself, hit backboard, and read rebound for double tap.',
+                    execution: ['Pop ball off wall.', 'Hit backboard directly from wall jump.', 'Fly in for tap.'],
+                    keybinds: 'Self Pop + Backboard Read',
+                    tags: ['self setup double tap', 'champ']
+                },
+                {
+                    id: 'redirect-pass-touch',
+                    name: 'Redirect / Pass Touch',
+                    category: 'Air Dribbles & Touches',
+                    year: '2016',
+                    creator: 'RLCS Teams',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 2+',
+                    difficulty: 'Medium',
+                    youtubeId: 'L8E_6_0_7_M',
+                    summary: 'Deflecting fast pass from teammate into opponent net while flying across field.',
+                    execution: ['Position deep downfield.', 'Jump into line of high-speed pass and tilt car bumper to redirect.'],
+                    keybinds: 'Bumper Deflection',
+                    tags: ['redirect', 'pass touch', 'teamwork']
+                },
+                {
+                    id: 'redirect-double-touch',
+                    name: 'Redirect Double Touch',
+                    category: 'Air Dribbles & Touches',
+                    year: '2018',
+                    creator: 'Pros',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 1+',
+                    difficulty: 'Hard',
+                    youtubeId: 'L8E_6_0_7_M',
+                    summary: 'Redirecting high pass onto opponent backboard and double-tapping the rebound.',
+                    execution: ['Redirect pass onto backboard.', 'Spin car and hit secondary rebound.'],
+                    keybinds: 'Redirect + Rebound Double Tap',
+                    tags: ['redirect double tap', 'gc']
+                },
+                {
+                    id: 'rebound-shot',
+                    name: 'Rebound Shot',
+                    category: 'Air Dribbles & Touches',
+                    year: '2015',
+                    creator: 'Base Mechanics',
+                    tier: 'Gold/Plat',
+                    rankReq: 'Plat 2+',
+                    difficulty: 'Medium',
+                    youtubeId: 'H9G-0_J_1v4',
+                    summary: 'Scoring off wall/backboard bounce from ground jump or quick aerial.',
+                    execution: ['Read wall bounce trajectory.', 'Time jump to strike ball on second bounce.'],
+                    keybinds: 'Rebound Timing',
+                    tags: ['rebound shot', 'backboard']
+                },
+                {
+                    id: 'infinite-air-dribble',
+                    name: 'Infinite Air Dribble',
+                    category: 'Air Dribbles & Touches',
+                    year: '2020',
+                    creator: 'Ganer',
+                    tier: 'GC/SSL',
+                    rankReq: 'SSL',
+                    difficulty: 'Extreme',
+                    youtubeId: '5B4TOgknY2A',
+                    summary: 'Carrying ball in air for 30+ seconds straight across field without touching ground.',
+                    execution: ['Feather boost under exact center gravity point of ball infinitely.'],
+                    keybinds: 'Micro-Boost Precision',
+                    tags: ['infinite air dribble', 'ganer', 'ssl']
+                },
+                {
+                    id: 'hover-dribble',
+                    name: 'Hover Dribble',
+                    category: 'Air Dribbles & Touches',
+                    year: '2021',
+                    creator: 'Freestyle Scene',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 2+',
+                    difficulty: 'Hard',
+                    youtubeId: '5B4TOgknY2A',
+                    summary: 'Holding ball floating motionless in mid-air using vertical boost feathering.',
+                    execution: ['Pop ball vertical.', 'Hover directly underneath maintaining static height.'],
+                    keybinds: 'Vertical Hover Boost',
+                    tags: ['hover dribble', 'freestyle']
+                },
+
+                // === 10. FLIP RESETS & STALLS ===
+                {
+                    id: 'flip-reset-main',
+                    name: 'Flip Reset',
+                    category: 'Resets & Stalls',
+                    year: '2017',
+                    creator: 'Shogun / Freestylers',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 1+',
+                    difficulty: 'Hard',
+                    youtubeId: '04yL2eG7y2s',
+                    summary: 'Pressing all 4 wheels simultaneously onto ball underside to gain new dodge flip.',
+                    execution: ['Pop ball into air.', 'Fly underneath upside down.', 'Touch 4 wheels to ball surface simultaneously.'],
+                    keybinds: '4-Wheel Contact',
+                    tags: ['flip reset', 'gc', 'aerial reset']
+                },
+                {
+                    id: 'single-flip-reset',
+                    name: 'Single Flip Reset',
+                    category: 'Resets & Stalls',
+                    year: '2017',
+                    creator: 'Rizzo / Pros',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 1+',
+                    difficulty: 'Hard',
+                    youtubeId: '04yL2eG7y2s',
+                    summary: 'Standard single 4-wheel reset touch into instant flick over goalie.',
+                    execution: ['Get reset touch under ball.', 'Use dodge to flick ball past goalie.'],
+                    keybinds: 'Reset + Dodge Flick',
+                    tags: ['single flip reset', 'gc']
+                },
+                {
+                    id: 'chain-flip-reset-multi',
+                    name: 'Chain Flip Reset / Multi-Reset',
+                    category: 'Resets & Stalls',
+                    year: '2019',
+                    creator: 'Ganer / Dark?',
+                    tier: 'GC/SSL',
+                    rankReq: 'SSL',
+                    difficulty: 'Extreme',
+                    youtubeId: 'Z_8-QW0A3jA',
+                    summary: 'Chaining 2, 3, or 4 consecutive flip resets in a single flight before shooting.',
+                    execution: ['Get 1st reset.', 'Flip cancel into ball belly to get 2nd reset immediately.'],
+                    keybinds: 'Flip Cancel Reset Chain',
+                    tags: ['chain reset', 'multi reset', 'ssl']
+                },
+                {
+                    id: 'arsenal-reset',
+                    name: 'Arsenal Reset',
+                    category: 'Resets & Stalls',
+                    year: '2020',
+                    creator: 'Arsenal (SSG)',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 2+',
+                    difficulty: 'Hard',
+                    youtubeId: 'gT594-c1XwI',
+                    summary: 'Side-flipping upside down onto ball belly to get reset while disorienting defenders.',
+                    execution: ['Fly under ball upside down.', 'Side-flip into ball belly to land 4 wheels.'],
+                    keybinds: 'Side-Flip Reset Touch',
+                    tags: ['arsenal reset', 'rlcs']
+                },
+                {
+                    id: 'helicopter-reset',
+                    name: 'Helicopter Reset',
+                    category: 'Resets & Stalls',
+                    year: '2021',
+                    creator: 'Freestylers',
+                    tier: 'GC/SSL',
+                    rankReq: 'SSL',
+                    difficulty: 'Extreme',
+                    youtubeId: 'YvHq6sM6x9E',
+                    summary: 'Spinning horizontally like helicopter blades while stalling under ball to get reset.',
+                    execution: ['Tornado spin into horizontal state under ball.', 'Stall and land wheels.'],
+                    keybinds: 'Horizontal Stall Reset',
+                    tags: ['helicopter reset', 'freestyle']
+                },
+                {
+                    id: 'ceiling-flip-reset',
+                    name: 'Ceiling Flip Reset',
+                    category: 'Resets & Stalls',
+                    year: '2018',
+                    creator: 'Freestylers',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 1+',
+                    difficulty: 'Hard',
+                    youtubeId: 'Z_8-QW0A3jA',
+                    summary: 'Falling off ceiling and landing wheels on ball for flip reset.',
+                    execution: ['Fall off ceiling.', 'Fly under ball and land 4 wheels on ball belly.'],
+                    keybinds: 'Ceiling Fall + Reset',
+                    tags: ['ceiling reset', 'freestyle']
+                },
+                {
+                    id: 'pre-jump-reset',
+                    name: 'Pre-Jump Reset',
+                    category: 'Resets & Stalls',
+                    year: '2020',
+                    creator: 'Competitive Meta',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 2+',
+                    difficulty: 'Hard',
+                    youtubeId: '04yL2eG7y2s',
+                    summary: 'Pre-jumping teammate high pass to get flip reset touch before defenders jump.',
+                    execution: ['Jump before teammate passes.', 'Meet pass in air and get flip reset.'],
+                    keybinds: 'Pre-Jump Pass Read',
+                    tags: ['pre jump reset', 'teamwork']
+                },
+                {
+                    id: 'stall',
+                    name: 'Stall',
+                    category: 'Resets & Stalls',
+                    year: '2017',
+                    creator: 'Freestylers',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 1+',
+                    difficulty: 'Hard',
+                    youtubeId: '3V1P4-6D3jE',
+                    summary: 'Canceling tornado spin with opposite air roll to freeze car vertical height in air.',
+                    execution: ['Hold Air Roll Left.', 'Push stick straight RIGHT and press Jump.'],
+                    keybinds: 'ARL + Stick Right + Jump',
+                    tags: ['stall', 'freestyle']
+                },
+                {
+                    id: 'stall-reset',
+                    name: 'Stall Reset',
+                    category: 'Resets & Stalls',
+                    year: '2018',
+                    creator: 'Freestylers',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 2+',
+                    difficulty: 'Extreme',
+                    youtubeId: '3V1P4-6D3jE',
+                    summary: 'Stalling directly under ball belly to catch reset without pushing ball away.',
+                    execution: ['Fly under ball.', 'Execute stall right as car roof touches ball belly.'],
+                    keybinds: 'Stall + Reset Contact',
+                    tags: ['stall reset', 'multi reset']
+                },
+
+                // === 11. POGOS, TRICKS & PINCHES ===
+                {
+                    id: 'pogo-standard-ground',
+                    name: 'Pogo (Standard Pogo & Ground Pogo)',
+                    category: 'Pogos & Pinches',
+                    year: '2018',
+                    creator: 'Plan B / Freestylers',
+                    tier: 'Champ/GC',
+                    rankReq: 'Champ 2+',
+                    difficulty: 'Hard',
+                    youtubeId: 'P1J4YwL6y4M',
+                    summary: 'Bouncing rear bumper corner off floor surface to rebound back into air.',
+                    execution: ['Fly down nose-up.', 'Bounce rear corner off ground while holding powerslide.'],
+                    keybinds: 'Rear Bumper Rebound',
+                    tags: ['pogo', 'ground pogo', 'freestyle']
+                },
+                {
+                    id: 'plan-b-reverse-pogo',
+                    name: 'Plan B / Reverse Pogo',
+                    category: 'Pogos & Pinches',
+                    year: '2019',
+                    creator: 'Plan B',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 2+',
+                    difficulty: 'Hard',
+                    youtubeId: 'P1J4YwL6y4M',
+                    summary: 'Bouncing car nose straight off ground to pop high into air for follow-up hit.',
+                    execution: ['Fly straight down nose-first.', 'Bounce nose off floor and use recoil height.'],
+                    keybinds: 'Nose Ground Rebound',
+                    tags: ['plan b', 'reverse pogo']
+                },
+                {
+                    id: 'walrus-tail-pogo',
+                    name: 'Walrus / Tail Pogo',
+                    category: 'Pogos & Pinches',
+                    year: '2020',
+                    creator: 'Freestylers',
+                    tier: 'GC/SSL',
+                    rankReq: 'SSL',
+                    difficulty: 'Extreme',
+                    youtubeId: 'P1J4YwL6y4M',
+                    summary: 'Bouncing back wheels/tail flat off ground repeatedly while holding ball.',
+                    execution: ['Tilt car vertically up.', 'Bounce tail bumper continuously.'],
+                    keybinds: 'Tail Rebound',
+                    tags: ['walrus', 'tail pogo']
+                },
+                {
+                    id: 'kuxir-pinch',
+                    name: 'Kuxir Pinch',
+                    category: 'Pogos & Pinches',
+                    year: '2015',
+                    creator: 'Kuxir97',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Diamond 3+',
+                    difficulty: 'Medium-Hard',
+                    youtubeId: 'gT594-c1XwI',
+                    summary: 'Pinching ball against side wall face with car front corner for 120km/h+ cross-field goals.',
+                    execution: ['Approach wall at 45 degree angle alongside ball.', 'Dodge into ball as it touches wall.'],
+                    keybinds: 'Wall Dodge Pinch',
+                    tags: ['kuxir pinch', 'kuxir', 'pinch']
+                },
+                {
+                    id: 'ground-pinch',
+                    name: 'Ground Pinch',
+                    category: 'Pogos & Pinches',
+                    year: '2018',
+                    creator: 'Pulse Clan',
+                    tier: 'Diamond/Champ',
+                    rankReq: 'Champ 1+',
+                    difficulty: 'Medium-Hard',
+                    youtubeId: 'v3gW4yM8s3A',
+                    summary: 'Slamming ball against floor surface from high aerial to launch 130km/h+ shot.',
+                    execution: ['Fly down towards falling ball.', 'Dodge forward into ball top right as it touches floor.'],
+                    keybinds: 'Downward Dodge Pinch',
+                    tags: ['ground pinch', 'pinch']
+                },
+                {
+                    id: 'ceiling-pinch-main',
+                    name: 'Ceiling Pinch',
+                    category: 'Pogos & Pinches',
+                    year: '2019',
+                    creator: 'Freestylers',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 1+',
+                    difficulty: 'Hard',
+                    youtubeId: '8S8-Y8Y9X-0',
+                    summary: 'Pinching ball against ceiling panel to propel shot downwards.',
+                    execution: ['Pop ball to ceiling.', 'Dodge into ball against ceiling face.'],
+                    keybinds: 'Ceiling Pinch',
+                    tags: ['ceiling pinch', 'pinch']
+                },
+                {
+                    id: 'team-pinch',
+                    name: 'Team Pinch',
+                    category: 'Pogos & Pinches',
+                    year: '2018',
+                    creator: 'Pulse Clan',
+                    tier: 'Champ/GC',
+                    rankReq: 'Champ 2+',
+                    difficulty: 'Hard',
+                    youtubeId: '1V1-W9K8P_M',
+                    summary: 'Two teammates dodging into ball simultaneously from opposite angles for 150km/h+ shots.',
+                    execution: ['Both players approach ball from opposite 45 degree angles.', 'Dodge at exact same frame.'],
+                    keybinds: 'Synchronized Team Dodge',
+                    tags: ['team pinch', 'freestyle pinch']
+                },
+                {
+                    id: 'aztral-pinch',
+                    name: 'Aztral Pinch',
+                    category: 'Pogos & Pinches',
+                    year: '2020',
+                    creator: 'AztraL',
+                    tier: 'GC/SSL',
+                    rankReq: 'GC 2+',
+                    difficulty: 'Hard',
+                    youtubeId: 'Z9gXW4K0_s0',
+                    summary: 'Pinch executed while sliding backward up sidewall curve face.',
+                    execution: ['Drive backward up wall curve.', 'Backflip into ball at wall junction.'],
+                    keybinds: 'Backward Wall Pinch',
+                    tags: ['aztral pinch', 'rlcs']
+                },
+                {
+                    id: 'psycho-shot-pinch',
+                    name: 'Psycho Shot (Psycho Pinch)',
+                    category: 'Pogos & Pinches',
+                    year: '2021',
+                    creator: 'Psycho',
+                    tier: 'GC/SSL',
+                    rankReq: 'SSL',
+                    difficulty: 'Extreme',
+                    youtubeId: 'mN-W1J18V00',
+                    summary: 'Pinching ball off your OWN backboard from opponent half and scoring across entire pitch.',
+                    execution: ['Hit ball high onto your own backboard.', 'Fly back and execute backboard corner pinch.'],
+                    keybinds: 'Own-Backboard Cross-Pitch Pinch',
+                    tags: ['psycho shot', 'psycho pinch', 'ssl']
+                },
+                {
+                    id: 'slingshot-ceiling-dribble',
+                    name: 'Slingshot / Ceiling Pinch Dribble',
+                    category: 'Pogos & Pinches',
+                    year: '2021',
+                    creator: 'Freestylers',
+                    tier: 'GC/SSL',
+                    rankReq: 'SSL',
+                    difficulty: 'Extreme',
+                    youtubeId: '8S8-Y8Y9X-0',
+                    summary: 'Pinching ball softly off ceiling and catching it back immediately in air dribble.',
+                    execution: ['Soft ceiling pinch.', 'Catch rebound touch instantly in mid-air.'],
+                    keybinds: 'Ceiling Soft Pinch + Catch',
+                    tags: ['slingshot dribble', 'freestyle']
+                }
+            ];
+
+            // Render Function for Mechanics Timeline Codex
+            function renderMechanicsTimeline(categoryFilter = 'all') {
+                const container = document.getElementById('timeline-cards-list');
+                if (!container) return;
+
+                let filtered = mechanicsDB;
+                if (categoryFilter !== 'all') {
+                    filtered = mechanicsDB.filter(m => m.category.toLowerCase().includes(categoryFilter.toLowerCase()) || m.tier.toLowerCase().includes(categoryFilter.toLowerCase()));
+                }
+
+                container.innerHTML = filtered.map(m => `
+                    <div class="glass-panel p-5 sm:p-6 rounded-2xl border border-rlBorder hover:border-rlBlue/50 transition group">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-rlBorder/60 pb-3">
+                            <div class="flex items-center space-x-3">
+                                <span class="px-2.5 py-1 rounded-md bg-rlBlue/20 text-rlBlue border border-rlBlue/30 text-xs font-mono font-bold">${m.year}</span>
+                                <h3 class="font-orbitron font-bold text-lg text-white group-hover:text-rlBlue transition">${m.name}</h3>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2 text-xs">
+                                <span class="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-gray-300">${m.category}</span>
+                                <span class="px-2.5 py-1 rounded-full bg-rlOrange/20 text-rlOrange border border-rlOrange/40 font-semibold">${m.rankReq}</span>
+                                <span class="px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40">${m.difficulty}</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 pt-4">
+                            <div class="lg:col-span-2 space-y-3">
+                                <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">${m.summary}</p>
+                                <div class="bg-rlDark/80 p-3 rounded-xl border border-rlBorder/60 space-y-1">
+                                    <span class="text-[10px] font-mono uppercase text-rlBlue font-bold block">Execution Steps:</span>
+                                    <ul class="list-disc list-inside text-xs text-gray-400 space-y-1">
+                                        ${m.execution.map(step => `<li>${step}</li>`).join('')}
+                                    </ul>
+                                </div>
+                                <div class="flex items-center justify-between text-xs text-gray-400 font-mono">
+                                    <span>Recommended Binds: <strong class="text-white">${m.keybinds}</strong></span>
+                                    <span>Discovered: <strong class="text-gray-300">${m.creator}</strong></span>
+                                </div>
+                            </div>
+
+                            <div class="lg:col-span-1 flex flex-col justify-between space-y-3 bg-rlDark/50 p-4 rounded-xl border border-rlBorder">
+                                <div class="text-center space-y-1">
+                                    <i class="fa-solid fa-circle-play text-3xl text-rlOrange group-hover:scale-110 transition"></i>
+                                    <h4 class="font-orbitron text-xs font-bold text-white">Video Tutorial Ready</h4>
+                                    <p class="text-[11px] text-gray-400">Step-by-step visual execution</p>
+                                </div>
+                                <button onclick="openVideoModal('${m.youtubeId}', '${m.name}')" class="w-full bg-gradient-to-r from-rlOrange to-amber-600 hover:from-amber-600 hover:to-rlOrange text-white font-bold py-2 px-3 rounded-lg text-xs shadow-md transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-play"></i> Watch Tutorial
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Category Filter Switcher
+            function filterMechanicsCategory(category) {
+                document.querySelectorAll('.cat-filter-btn').forEach(btn => {
+                    btn.classList.remove('bg-rlBlue', 'text-white');
+                    btn.classList.add('bg-rlCard', 'text-gray-300');
+                });
+                event.target.classList.remove('bg-rlCard', 'text-gray-300');
+                event.target.classList.add('bg-rlBlue', 'text-white');
+                renderMechanicsTimeline(category);
+            }
+
+            // Live Search Engine Filtering across all 100+ mechanics
+            function performSearch(query) {
+                const resultsContainer = document.getElementById('search-results-container');
+                const defaultGrid = document.getElementById('default-dashboard-grid');
+                const clearBtn = document.getElementById('clear-search-btn');
+
+                if (!query.trim()) {
+                    resultsContainer.innerHTML = '';
+                    defaultGrid.classList.remove('hidden');
+                    clearBtn.classList.add('hidden');
+                    return;
+                }
+
+                clearBtn.classList.remove('hidden');
+                defaultGrid.classList.add('hidden');
+
+                const matches = mechanicsDB.filter(m => 
+                    m.name.toLowerCase().includes(query.toLowerCase()) ||
+                    m.category.toLowerCase().includes(query.toLowerCase()) ||
+                    m.summary.toLowerCase().includes(query.toLowerCase()) ||
+                    m.tags.some(t => t.toLowerCase().includes(query.toLowerCase()))
+                );
+
+                if (matches.length === 0) {
+                    resultsContainer.innerHTML = `
+                        <div class="glass-panel p-8 rounded-2xl text-center space-y-3 border border-rlBorder">
+                            <i class="fa-solid fa-magnifying-glass text-3xl text-gray-500"></i>
+                            <h3 class="font-orbitron text-lg text-white">No exact mechanic match found</h3>
+                            <p class="text-xs text-gray-400">Try searching "Musty", "Zap Dash", "Psycho", "45 Flick", or "Speedflip".</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                resultsContainer.innerHTML = `
+                    <div class="text-xs font-mono text-gray-400 mb-2">Found ${matches.length} matching mechanics:</div>
+                    ${matches.map(m => `
+                        <div class="glass-panel p-4 rounded-xl border border-rlBorder hover:border-rlBlue/60 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="space-y-1">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs font-mono px-2 py-0.5 rounded bg-rlBlue/20 text-rlBlue">${m.category}</span>
+                                    <h4 class="font-orbitron font-bold text-white text-base">${m.name}</h4>
+                                    <span class="text-xs font-mono text-rlOrange">(${m.rankReq})</span>
+                                </div>
+                                <p class="text-xs text-gray-300 line-clamp-1">${m.summary}</p>
+                            </div>
+                            <button onclick="openVideoModal('${m.youtubeId}', '${m.name}')" class="whitespace-nowrap bg-rlOrange hover:bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-lg transition flex items-center gap-2">
+                                <i class="fa-solid fa-play"></i> Watch Guide
+                            </button>
+                        </div>
+                    `).join('')}
+                `;
+            }
+
+            function quickFilter(term) {
+                const input = document.getElementById('main-search-input');
+                input.value = term;
+                performSearch(term);
+            }
+
+            function clearSearch() {
+                const input = document.getElementById('main-search-input');
+                input.value = '';
+                performSearch('');
+            }
+
+            // Init on Window Load
+            window.onload = function() {
+                renderMechanicsTimeline('all');
+                renderHitboxes();
+                fetchTrackerStats();
+                generateRoadmap();
+            };
+        </script>
